@@ -1,0 +1,34 @@
+{
+  "source": "VFB Neo4j public database",
+  "dataset": "FlyWire neurons indexed in VFB",
+  "query": "MATCH (n:Neuron)-[r: synapsed_to]->(m:Neuron) RETURN n.short_form AS source, m.short_form AS target, coalesce(r.weight[0],1) AS weight LIMIT 12",
+  "retrieved": "2026-09-18",
+  "provenance_url": "https://pdb.v4.virtualflybrain.org/browser/",
+  "edges": [
+    {"source": "VFB_fw062027", "target": "VFB_fw106047", "weight": 10},
+    {"source": "VFB_fw061586", "target": "VFB_fw106047", "weight": 2},
+    {"source": "VFB_fw097202", "target": "VFB_fw106047", "weight": 2},
+    {"source": "VFB_fw082610", "target": "VFB_fw106047", "weight": 4},
+    {"source": "VFB_fw060941", "target": "VFB_fw106047", "weight": 8},
+    {"source": "VFB_fw061777", "target": "VFB_fw106047", "weight": 2},
+    {"source": "VFB_fw051059", "target": "VFB_fw106047", "weight": 6},
+    {"source": "VFB_fw056657", "target": "VFB_fw106047", "weight": 5},
+    {"source": "VFB_fw050611", "target": "VFB_fw106047", "weight": 5},
+    {"source": "VFB_fw061816", "target": "VFB_fw106047", "weight": 7},
+    {"source": "VFB_fw084081", "target": "VFB_fw106047", "weight": 8},
+    {"source": "VFB_fw115297", "target": "VFB_fw106047", "weight": 5}
+  ],
+  "interface_edges": [
+    {"source": "danger_front", "target": "VFB_fw062027", "weight": -1, "kind": "interface"},
+    {"source": "danger_left", "target": "VFB_fw061586", "weight": -1, "kind": "interface"},
+    {"source": "danger_right", "target": "VFB_fw097202", "weight": -1, "kind": "interface"},
+    {"source": "fruit_front", "target": "VFB_fw082610", "weight": 1, "kind": "interface"},
+    {"source": "fruit_left", "target": "VFB_fw060941", "weight": 1, "kind": "interface"},
+    {"source": "fruit_right", "target": "VFB_fw061777", "weight": 1, "kind": "interface"},
+    {"source": "VFB_fw106047", "target": "straight", "weight": 1, "kind": "interface"},
+    {"source": "danger_left", "target": "turn_right", "weight": 2, "kind": "interface"},
+    {"source": "danger_right", "target": "turn_left", "weight": 2, "kind": "interface"},
+    {"source": "fruit_left", "target": "turn_left", "weight": 1, "kind": "interface"},
+    {"source": "fruit_right", "target": "turn_right", "weight": 1, "kind": "interface"}
+  ]
+}

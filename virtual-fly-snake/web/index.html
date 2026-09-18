@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Virtual Fly Snake — Não ruồi chơi Rắn săn mồi</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <main>
+    <header>
+      <div>
+        <p class="eyebrow">PHÒNG THÍ NGHIỆM NÃO RUỒI</p>
+        <h1>Não ruồi chơi Rắn săn mồi</h1>
+        <p class="subtitle">Mô phỏng với synapse thật được truy vấn từ cơ sở dữ liệu Virtual Fly Brain.</p>
+      </div>
+      <div class="controls">
+        <button id="simulate">▶ Bắt đầu mô phỏng</button><button id="pause">Ⅱ Tạm dừng</button><button id="reset">↻ Chơi lại</button>
+        <div class="speed-control"><span>Tốc độ học</span><button data-speed="1">1×</button><button data-speed="5" class="selected">5×</button><button data-speed="20">20×</button></div>
+      </div>
+    </header>
+    <section class="layout">
+      <article class="panel game-panel">
+        <div class="panel-title"><span>🎮 Bàn chơi Rắn săn mồi</span><span id="status">ĐANG TẠM DỪNG</span></div>
+        <div class="board-shell">
+          <div class="board-badge">KHU VỰC THÍ NGHIỆM</div>
+          <canvas id="game" width="480" height="480"></canvas>
+          <div class="board-legend"><span><i class="legend-snake"></i> thân rắn</span><span><i class="legend-fruit"></i> mục tiêu</span></div>
+        </div>
+        <div class="stats"><div><b id="score">0</b><span>quả đã ăn</span></div><div><b id="action">đi thẳng</b><span>quyết định hiện tại</span></div></div>
+      </article>
+      <article class="panel brain-panel">
+        <div class="panel-title"><span>🧠 Hoạt động não ruồi</span><span class="live">● TRỰC TIẾP</span></div>
+        <div class="fly-brain-wrap">
+          <div class="brain-caption">SƠ ĐỒ HOẠT ĐỘNG — vùng sáng = đang được kích hoạt</div>
+          <svg id="fly-brain" viewBox="0 0 620 250" role="img" aria-label="Sơ đồ hoạt động các vùng não ruồi">
+            <defs>
+              <radialGradient id="brainGlow"><stop offset="0" stop-color="#ff7ca7"/><stop offset="1" stop-color="#e45182"/></radialGradient>
+              <filter id="glow"><feGaussianBlur stdDeviation="5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            </defs>
+            <path class="fly-outline" d="M74 128 C70 66 135 24 228 28 C292 0 389 12 448 47 C518 53 567 90 546 143 C530 189 468 212 394 206 C330 239 233 234 179 210 C118 211 72 181 74 128Z"/>
+            <ellipse id="region-visual" class="brain-region" cx="151" cy="113" rx="64" ry="42"/>
+            <ellipse id="region-mushroom" class="brain-region" cx="291" cy="83" rx="70" ry="32"/>
+            <ellipse id="region-central" class="brain-region" cx="330" cy="151" rx="58" ry="42"/>
+            <ellipse id="region-motor" class="brain-region" cx="454" cy="133" rx="67" ry="42"/>
+            <path class="brain-bridge" d="M207 113 C240 105 248 86 276 83 M356 96 C379 108 390 121 401 130 M378 163 C399 158 409 151 420 143"/>
+            <text class="brain-label" x="151" y="118">THỊ GIÁC</text>
+            <text class="brain-label" x="291" y="88">HỘI TỤ</text>
+            <text class="brain-label" x="330" y="156">ĐỊNH HƯỚNG</text>
+            <text class="brain-label" x="454" y="138">VẬN ĐỘNG</text>
+            <g id="brain-legend"><circle cx="98" cy="229" r="6" fill="#d9ecec"/><text x="110" y="233">chưa hoạt hóa</text><circle cx="245" cy="229" r="6" fill="#e45182"/><text x="257" y="233">đang hoạt hóa</text></g>
+          </svg>
+          <div class="brain-note">Sơ đồ vùng minh họa; neuron và synapse VFB thật được liệt kê bên dưới.</div>
+        </div>
+        <svg id="brain" viewBox="0 0 620 560" role="img" aria-label="Hoạt động connectome đang được mô phỏng"></svg>
+        <div id="source" class="source"></div>
+        <div id="provenance" class="provenance"></div>
+      </article>
+    </section>
+    <section class="evidence">
+      <article class="panel"><span class="metric-label">Nút thần kinh trong đồ thị</span><strong id="node-count">—</strong></article>
+      <article class="panel"><span class="metric-label">Synapse VFB / tổng liên kết</span><strong id="edge-count">—</strong></article>
+      <article class="panel"><span class="metric-label">Tín hiệu đầu vào</span><strong id="input-count">—</strong></article>
+      <article class="panel"><span class="metric-label">Mô hình đang chạy</span><strong id="model-name">—</strong></article>
+    </section>
+    <section class="panel execution-panel">
+      <div class="panel-title"><span>💻 Dòng lệnh não ruồi đang thực thi</span><span class="live">● LIVE TRACE</span></div>
+      <div class="execution-status"><span class="terminal-dot"></span><span id="execution-status">Đang chờ mô phỏng</span><span id="execution-tick">tick —</span></div>
+      <pre id="execution-code" class="execution-code" aria-live="polite"></pre>
+      <p class="note">Đây là trace được tạo từ chính vòng lặp mô phỏng: đọc tín hiệu, truyền qua các node VFB, chọn hành động, nhận reward và cập nhật Q-learning.</p>
+    </section>
+    <section class="panel learning-panel">
+      <div class="panel-title"><span>⚡ Tín hiệu học / phần thưởng</span><span id="data-status" class="warning">—</span></div>
+      <div class="learning-grid">
+        <div><span class="metric-label">Tín hiệu bước này</span><strong id="reward">0</strong></div>
+        <div><span class="metric-label">Tổng tích lũy</span><strong id="total-reward">0</strong></div>
+        <div><span class="metric-label">Số bước</span><strong id="steps">0</strong></div>
+        <div><span class="metric-label">Sự kiện</span><strong id="event">Sẵn sàng</strong></div>
+      </div>
+      <div class="learning-grid secondary"><div><span class="metric-label">Episode</span><strong id="episodes">0</strong></div><div><span class="metric-label">Khám phá ε</span><strong id="epsilon">1.00</strong></div><div><span class="metric-label">Trạng thái đã học</span><strong id="learned-states">0</strong></div><div><span class="metric-label">Điểm TB 100 episode</span><strong id="average-score">0</strong></div></div>
+      <div class="history" id="history" aria-label="Lịch sử điểm theo episode"></div>
+      <div class="reward-track"><div id="reward-fill"></div></div>
+      <p class="note">Q-learning cập nhật giá trị hành động sau từng bước. Ăn quả: <b>+10</b> · Di chuyển: <b>-0.05</b> · Va chạm: <b>-10</b>. ε cao lúc đầu khiến agent thử sai nhiều hơn.</p>
+    </section>
+    <section class="panel signals">
+      <div class="panel-title"><span>📡 Tín hiệu cảm giác → quyết định</span><span>cập nhật theo từng bước</span></div>
+      <div id="inputs" class="input-grid"></div>
+      <p class="note">Các giá trị này là cầu nối được công khai giữa môi trường trò chơi và đồ thị. Chúng giúp kiểm tra mô phỏng thay vì chỉ dựa vào hình ảnh động.</p>
+    </section>
+    <section class="panel explanation">
+      <h2>Đang mô phỏng điều gì?</h2>
+      <p>Tín hiệu từ trò chơi được đưa vào các nút cảm giác, truyền qua đồ thị có trọng số, rồi được giải mã thành rẽ trái, đi thẳng hoặc rẽ phải. Bảng số liệu cho phép kiểm tra dữ liệu đang chạy. Đây là mô phỏng connectome rút gọn, không phải toàn bộ não ruồi sinh học; hãy thay tệp mẫu bằng một bản xuất VFB có ghi rõ nguồn trước khi diễn giải theo hướng sinh học.</p>
+      <a href="https://www.virtualflybrain.org/" target="_blank" rel="noreferrer">Mở Virtual Fly Brain ↗</a>
+    </section>
+    <section class="panel guide-panel">
+      <div class="panel-title"><span>🧪 Cách đọc và trình diễn</span><span>3 bước</span></div>
+      <div class="guide-grid">
+        <div class="guide-step"><b>01</b><strong>Bắt đầu</strong><p>Bấm <em>Bắt đầu mô phỏng</em>. Bàn chơi, đồ thị neuron và live trace sẽ cùng cập nhật.</p></div>
+        <div class="guide-step"><b>02</b><strong>Kiểm tra bằng chứng</strong><p>Quan sát node VFB sáng lên, action hiện tại, reward, epsilon và số trạng thái đã học.</p></div>
+        <div class="guide-step"><b>03</b><strong>Giải thích trung thực</strong><p>Đây là graph rút gọn dùng synapse VFB làm wiring; mapping game và Q-learning là phần thí nghiệm bổ sung.</p></div>
+      </div>
+      <p class="note">Muốn cho người xem thấy quá trình thử-sai, chọn tốc độ <b>1×</b>. Chọn <b>20×</b> để cho thấy nhiều episode học nhanh hơn.</p>
+    </section>
+  </main>
+  <script src="/app.js"></script>
+</body>
+</html>

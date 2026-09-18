@@ -1,0 +1,22 @@
+{
+  "source": "demo-only; replace with documented VFB export",
+  "edges": [
+    {"source": "visual_left", "target": "navigation_left", "weight": 1.0},
+    {"source": "visual_right", "target": "navigation_right", "weight": 1.0},
+    {"source": "danger_left", "target": "avoid_left", "weight": 1.2},
+    {"source": "danger_right", "target": "avoid_right", "weight": 1.2},
+    {"source": "danger_front", "target": "avoid_front", "weight": 1.5},
+    {"source": "fruit_left", "target": "approach_left", "weight": 1.0},
+    {"source": "fruit_right", "target": "approach_right", "weight": 1.0},
+    {"source": "fruit_front", "target": "approach_front", "weight": 1.2},
+    {"source": "navigation_left", "target": "turn_left", "weight": 1.0},
+    {"source": "navigation_right", "target": "turn_right", "weight": 1.0},
+    {"source": "avoid_left", "target": "turn_right", "weight": 1.0},
+    {"source": "avoid_right", "target": "turn_left", "weight": 1.0},
+    {"source": "avoid_front", "target": "turn_left", "weight": 0.8},
+    {"source": "avoid_front", "target": "turn_right", "weight": 0.8},
+    {"source": "approach_left", "target": "turn_left", "weight": 1.0},
+    {"source": "approach_right", "target": "turn_right", "weight": 1.0},
+    {"source": "approach_front", "target": "straight", "weight": 1.0}
+  ]
+}
